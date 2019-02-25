@@ -20,6 +20,13 @@ class Conso(models.Model):
     def __str__(self):
         return str(self.client_id)
 
+    def __iter__(self):
+        return iter([
+            self.janvier, self.fevrier, self.mars, self.avril, self.mai,
+            self.juin, self.juillet, self.aout, self.septembre, self.octobre,
+            self.novembre, self.decembre
+        ])
+
     class Meta:
         abstract = True
 

@@ -13,10 +13,25 @@
     </div>
 </div>
 
- -----> YOUR CODE HERE <-----
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Mes dépenses</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3 plot" id="yearly-cost-plot"></div>
+    <div class="col-lg-9 plot" id="monthly-cost-plot"></div>
+</div>
 
 {% endblock %}
 
 {% block script %}
+    <script>
+        var data = {
+            years: {{ years }},
+            consEuro: {{ conso_euro }},
+        };
+    </script>
     <script src="{% static 'dashboard/js/results.js' %}"></script>
 {% endblock %}
