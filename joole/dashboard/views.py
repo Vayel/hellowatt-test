@@ -18,6 +18,18 @@ class ClientFormView(View):
             client_id = form.cleaned_data['client']
             return redirect('dashboard:results', client_id=client_id)
 
+
+def read_consumption(model, client_id):
+    cons = model.objects.filter(
+        client_id=client_id
+    ).order_by("-year")[:settings.MAX_YEARS_DISPLAYED]
+    if not cons:
+        raise ValueError(
+            f"Aucune donnée de consommation pour le client n°{client_id}"
+        )
+    return list(reversed(cons))
+
+
 def results(request, client_id):
     # TODO
     is_elec_heating = True
@@ -30,29 +42,20 @@ def results(request, client_id):
             f"'{client_id}' n'est pas un identifiant valide."
         )
 
-    conso_euro = Conso_eur.objects.filter(
-        client_id=client_id
-    ).order_by("-year")[:settings.MAX_YEARS_DISPLAYED]
-    if not conso_euro:
-        return HttpResponseNotFound(
-            f"Aucune donnée de dépense pour le client n°{client_id}"
-        )
-    conso_euro = list(reversed(conso_euro))
+    try:
+        conso_euro = read_consumption(Conso_eur, client_id)
+    except ValueError as e:
+        return HttpResponseNotFound(str(e))
 
     try:
-        conso_watt = Conso_watt.objects.filter(
-            client_id=client_id
-        ).order_by("-year")[0]
-    except IndexError:
-        return HttpResponseNotFound(
-            f"Aucune donnée de consommation pour le client n°{client_id}"
-        )
+        conso_watt = read_consumption(Conso_watt, client_id)
+    except ValueError as e:
+        return HttpResponseNotFound(str(e))
 
     context = {
         "years": [conso.year for conso in conso_euro],
         "conso_euro": list(map(list, conso_euro)),
-        # TODO
-        "conso_watt": list(conso_watt),
+        "conso_watt": list(map(list, conso_watt)),
         "is_elec_heating": is_elec_heating,
         "dysfunction_detected": dysfunction_detected
     }

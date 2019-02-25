@@ -42,13 +42,19 @@ function plotMonthlyCost(container, years, monthlyCons) {
     });
 }
 
-function plotConsumption(container, year, consumption) {
-    Plotly.plot(container, [{
-        x: MONTH_NAMES,
-        y: consumption,
-        hoverinfo: 'y',
-    }], {
-        title: 'Consommation ' + year,
+function plotPowerConsumption(container, years, monthlyCons) {
+    let traces = [];
+    for (let iy in years) {
+        traces.push({
+            x: MONTH_NAMES,
+            y: monthlyCons[iy],
+            name: years[iy],
+            hoverinfo: 'y',
+            visible: (iy == years.length - 1) ? true : 'legendonly',
+        });
+    }
+
+    Plotly.plot(container, traces, {
         margin: { l: 50, r: 10, t: 30 },
         yaxis: { ticksuffix: ' W' },
     });
@@ -56,8 +62,4 @@ function plotConsumption(container, year, consumption) {
 
 plotYearlyCost(document.getElementById('yearly-cost-plot'), data.years, data.consEuro);
 plotMonthlyCost(document.getElementById('monthly-cost-plot'), data.years, data.consEuro);
-plotConsumption(
-    document.getElementById('consumption-plot'),
-    data.years[data.years.length - 1],
-    data.consWatt
-);
+plotPowerConsumption(document.getElementById('consumption-plot'), data.years, data.consWatt);
