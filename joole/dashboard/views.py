@@ -20,7 +20,6 @@ class ClientFormView(View):
 
 def results(request, client_id):
     # TODO
-    conso_watt = []
     is_elec_heating = True
     dysfunction_detected = False
 
@@ -40,11 +39,20 @@ def results(request, client_id):
         )
     conso_euro = list(reversed(conso_euro))
 
+    try:
+        conso_watt = Conso_watt.objects.filter(
+            client_id=client_id
+        ).order_by("-year")[0]
+    except IndexError:
+        return HttpResponseNotFound(
+            f"Aucune donnée de consommation pour le client n°{client_id}"
+        )
+
     context = {
         "years": [conso.year for conso in conso_euro],
         "conso_euro": list(map(list, conso_euro)),
         # TODO
-        "conso_watt": conso_watt,
+        "conso_watt": list(conso_watt),
         "is_elec_heating": is_elec_heating,
         "dysfunction_detected": dysfunction_detected
     }

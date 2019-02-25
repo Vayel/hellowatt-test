@@ -1,3 +1,7 @@
+.modebar {
+    display: none;
+}
+
 .plot {
     height: 250px;
 }

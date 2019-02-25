@@ -24,6 +24,15 @@
     <div class="col-lg-9 plot" id="monthly-cost-plot"></div>
 </div>
 
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Ma consommation</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 plot" id="consumption-plot"></div>
+</div>
 {% endblock %}
 
 {% block script %}
@@ -31,6 +40,7 @@
         var data = {
             years: {{ years }},
             consEuro: {{ conso_euro }},
+            consWattLastYear: {{ conso_watt }},
         };
     </script>
     <script src="{% static 'dashboard/js/results.js' %}"></script>
