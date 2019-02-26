@@ -35,7 +35,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-12 heating">
+    <div class="col-lg-6 heating">
         <div class="delta">
         {% if heating_conso_rel_delta >= 0 %}
             + {{ heating_conso_rel_delta }}%
@@ -49,10 +49,7 @@
             chauffage électrique.
         </div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-12 dysfunction">
+    <div class="col-lg-6 dysfunction">
     {% if not dysfunction %}
     <p>
         Aucun écart important de consommation détecté.<br />
@@ -60,7 +57,7 @@
     </p>
     {% else %}
     <p class="detected">
-        Un écart de consommation important a été détecté sur le mois de {{ dysfunction }}.<br />
+        Un écart de consommation important a été détecté en {{ dysfunction }}.<br />
         Il y a probablement un disfonctionnement.
     </p>
     {% endif %}
