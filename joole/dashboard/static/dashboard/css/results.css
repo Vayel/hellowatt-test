@@ -5,3 +5,20 @@
 .plot {
     height: 250px;
 }
+
+.heating {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.heating > div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.heating .delta {
+    font-size: 35px;
+    font-weight: bold;
+    margin-right: 20px;
+}

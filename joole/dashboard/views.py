@@ -1,3 +1,5 @@
+import statistics
+
 from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -30,9 +32,18 @@ def read_consumption(model, client_id):
     return list(reversed(cons))
 
 
+def compute_heating_conso_rel_delta(conso):
+    mean_heating = statistics.mean([
+        c for i, c in enumerate(conso) if i in settings.HEATING_MONTHS
+    ])
+    mean_not_heating = statistics.mean([
+        c for i, c in enumerate(conso) if i not in settings.HEATING_MONTHS
+    ])
+    return (mean_heating - mean_not_heating) / mean_not_heating
+
+
 def results(request, client_id):
     # TODO
-    is_elec_heating = True
     dysfunction_detected = False
 
     try:
@@ -51,12 +62,17 @@ def results(request, client_id):
         conso_watt = read_consumption(Conso_watt, client_id)
     except ValueError as e:
         return HttpResponseNotFound(str(e))
+    conso_watt = list(map(list, conso_watt))
+
+    heating_conso_rel_delta = compute_heating_conso_rel_delta(conso_watt[-1])
+    print(heating_conso_rel_delta)
 
     context = {
         "years": [conso.year for conso in conso_euro],
         "conso_euro": list(map(list, conso_euro)),
-        "conso_watt": list(map(list, conso_watt)),
-        "is_elec_heating": is_elec_heating,
+        "conso_watt": conso_watt,
+        "heating_conso_rel_delta": int(heating_conso_rel_delta * 100),
+        "is_elec_heating": heating_conso_rel_delta > settings.ELEC_HEATING_REL_DELTA,
         "dysfunction_detected": dysfunction_detected
     }
     return render(request, 'dashboard/results.html', context)
