@@ -2,7 +2,7 @@ import calendar
 import statistics
 
 from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponseNotFound
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.generic import View
 
@@ -39,7 +39,7 @@ def read_consumption(model, client_id):
         client_id=client_id
     ).order_by("-year")[:settings.MAX_YEARS_DISPLAYED]
     if not cons:
-        raise ValueError(
+        raise Http404(
             f"Aucune donnée de consommation pour le client n°{client_id}"
         )
     return list(reversed(cons))
@@ -97,19 +97,13 @@ def results(request, client_id):
     try:
         client_id = int(client_id)
     except (TypeError, ValueError):
-        return HttpResponseBadRequest(
+        raise Http404(
             f"'{client_id}' n'est pas un identifiant valide."
         )
 
-    try:
-        conso_euro = read_consumption(Conso_eur, client_id)
-    except ValueError as e:
-        return HttpResponseNotFound(str(e))
+    conso_euro = read_consumption(Conso_eur, client_id)
 
-    try:
-        conso_watt = read_consumption(Conso_watt, client_id)
-    except ValueError as e:
-        return HttpResponseNotFound(str(e))
+    conso_watt = read_consumption(Conso_watt, client_id)
     conso_watt = list(map(list, conso_watt))
 
     heating_delta = compute_heating_delta(conso_watt[-1])
