@@ -23,6 +23,18 @@ class ClientFormView(View):
 
 
 def read_consumption(model, client_id):
+    """Return the last `settings.MAX_YEARS_DISPLAYED` years of consumption of
+    of type `model` for the client `client_id`.
+
+    Parameters
+    ----------
+    model : Conso_eur or Conso_watt
+    client_id : int
+
+    Returns
+    -------
+    list of `model` objects
+    """
     cons = model.objects.filter(
         client_id=client_id
     ).order_by("-year")[:settings.MAX_YEARS_DISPLAYED]
@@ -34,6 +46,18 @@ def read_consumption(model, client_id):
 
 
 def compute_heating_conso_rel_delta(conso):
+    """Return the relative difference between the average consumption during
+    the heating period and the average consumption without heating.
+
+    Parameters
+    ----------
+    conso : list of 12 floats
+        A list of consumption for every month of a year.
+
+    Returns
+    -------
+    float
+    """
     mean_heating = statistics.mean([
         c for i, c in enumerate(conso) if i in settings.HEATING_MONTHS
     ])
@@ -44,6 +68,23 @@ def compute_heating_conso_rel_delta(conso):
 
 
 def find_dysfunction_month(conso):
+    """Return the index of the first month with a dysfunction, -1 if there is no
+    dysfunction. There is a potential dysfunction if the relative difference between
+    the consumption at year `n-1` and year `n` for a given month is over a
+    certain threshold.
+
+    Parameters
+    ----------
+    conso : list of 2 lists of floats
+        A list containing the consumption for two years, each one as a list of
+        floats.
+
+    Returns
+    -------
+    int
+        The index of the month with a potential dysfunction if there is some,
+        -1 otherwise.
+    """
     prev, cur = conso
     for i, (cons_prev, cons_cur) in enumerate(zip(prev, cur)):
         delta = abs((cons_cur - cons_prev) / cons_prev)
