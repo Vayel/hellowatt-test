@@ -109,6 +109,14 @@ STATICFILES_DIRS = [
 ]
 
 MAX_YEARS_DISPLAYED = 3
+
+# If the power consumption during the months `HEATING_MONTHS` is higher than
+# `(1 + ELEC_HEATING_DELTA) *` the consumption without heating, we make the
+# assumption that electrical heating is used.
 HEATING_MONTHS = [11, 0, 1]
-ELEC_HEATING_REL_DELTA = 0.1
-DYSFUNCTION_CONS_REL_DELTA = 0.1
+ELEC_HEATING_DELTA = 0.1
+
+# If the consumption for a given month varies by more than
+# `DYSFUNCTION_CONS_DELTA * 100`% between two consecutive years,
+# we decide that there is a potential dysfunction.
+DYSFUNCTION_CONS_DELTA = 0.1

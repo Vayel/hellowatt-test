@@ -45,7 +45,7 @@ def read_consumption(model, client_id):
     return list(reversed(cons))
 
 
-def compute_heating_conso_rel_delta(conso):
+def compute_heating_delta(conso):
     """Return the relative difference between the average consumption during
     the heating period and the average consumption without heating.
 
@@ -88,7 +88,7 @@ def find_dysfunction_month(conso):
     prev, cur = conso
     for i, (cons_prev, cons_cur) in enumerate(zip(prev, cur)):
         delta = abs((cons_cur - cons_prev) / cons_prev)
-        if delta > settings.DYSFUNCTION_CONS_REL_DELTA:
+        if delta > settings.DYSFUNCTION_CONS_DELTA:
             return i
     return -1
 
@@ -112,7 +112,7 @@ def results(request, client_id):
         return HttpResponseNotFound(str(e))
     conso_watt = list(map(list, conso_watt))
 
-    heating_conso_rel_delta = compute_heating_conso_rel_delta(conso_watt[-1])
+    heating_delta = compute_heating_delta(conso_watt[-1])
 
     dysfunction = None
     if len(conso_watt) > 1:
@@ -124,8 +124,8 @@ def results(request, client_id):
         "years": [conso.year for conso in conso_euro],
         "conso_euro": list(map(list, conso_euro)),
         "conso_watt": conso_watt,
-        "heating_conso_rel_delta": int(heating_conso_rel_delta * 100),
-        "is_elec_heating": heating_conso_rel_delta > settings.ELEC_HEATING_REL_DELTA,
+        "heating_delta": int(heating_delta * 100),
+        "is_elec_heating": heating_delta > settings.ELEC_HEATING_DELTA,
         "dysfunction": dysfunction,
     }
     return render(request, 'dashboard/results.html', context)
