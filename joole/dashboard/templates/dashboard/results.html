@@ -37,10 +37,10 @@
 <div class="row">
     <div class="col-lg-6 heating">
         <div class="delta">
-        {% if heating_conso_rel_delta >= 0 %}
-            + {{ heating_conso_rel_delta }}%
+        {% if heating_delta >= 0 %}
+            + {{ heating_delta }}%
         {% else %}
-            {{ heating_conso_rel_delta }}%
+            {{ heating_delta }}%
         {% endif %}
         </div>
         <div>
