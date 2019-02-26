@@ -44,10 +44,26 @@
         {% endif %}
         </div>
         <div>
-        de consommation pendant la période de chauffage.<br/>
-        Vous {% if is_elec_heating %} avez un {% else %} n'avez pas de {% endif %}
-        chauffage électrique.
+            de consommation pendant la période de chauffage.<br/>
+            Vous {% if is_elec_heating %} avez un {% else %} n'avez pas de {% endif %}
+            chauffage électrique.
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12 dysfunction">
+    {% if not dysfunction %}
+    <p>
+        Aucun écart important de consommation détecté.<br />
+        Il n'y a probablement pas de disfonctionnement.
+    </p>
+    {% else %}
+    <p class="detected">
+        Un écart de consommation important a été détecté sur le mois de {{ dysfunction }}.<br />
+        Il y a probablement un disfonctionnement.
+    </p>
+    {% endif %}
     </div>
 </div>
 {% endblock %}
